@@ -5,55 +5,49 @@ import { collectDefaultMetrics, Registry, Gauge, Histogram, Counter } from 'prom
 const app = express();
 const port = 3030;
 
-// Create a registry and register default system metrics
 const register = new Registry();
 collectDefaultMetrics({ register });
 
-// Custom metrics
-const durationHistogram = new Histogram({
-  name: 'ppa_mixed_task_duration_ms',
-  help: 'Duration of mixed tasks in ms',
+const ppaRequestCounter = new Counter({
+  name: 'ppa_node_requests_total',
+  help: 'Total number of mixed task requests handled by Node.js app'
+});
+
+const ppaDurationHistogram = new Histogram({
+  name: 'ppa_node_mixed_task_duration_ms',
+  help: 'Time taken for /api/mixed-tasks in Node.js app',
   buckets: [100, 300, 500, 1000, 3000, 5000, 10000],
 });
 
-const requestCounter = new Counter({
-  name: 'ppa_mixed_task_requests_total',
-  help: 'Total number of /api/mixed-tasks requests',
+const ppaCpuGauge = new Gauge({
+  name: 'ppa_node_process_cpu_seconds_total',
+  help: 'CPU time used by Node.js process (user + system)'
 });
 
-const cpuGauge = new Gauge({
-  name: 'ppa_process_cpu_seconds_total',
-  help: 'Total user + system CPU time used by the Node.js process',
+const ppaMemoryRssGauge = new Gauge({
+  name: 'ppa_node_process_memory_rss_bytes',
+  help: 'Resident Set Size memory usage in Node.js'
 });
 
-const memoryRssGauge = new Gauge({
-  name: 'ppa_process_memory_rss_bytes',
-  help: 'Resident Set Size memory usage (entire allocated memory)',
+const ppaHeapGauge = new Gauge({
+  name: 'ppa_node_process_heap_bytes',
+  help: 'Heap used by V8 in Node.js'
 });
 
-const heapUsedGauge = new Gauge({
-  name: 'ppa_process_heap_used_bytes',
-  help: 'V8 heap used in bytes',
-});
+register.registerMetric(ppaRequestCounter);
+register.registerMetric(ppaDurationHistogram);
+register.registerMetric(ppaCpuGauge);
+register.registerMetric(ppaMemoryRssGauge);
+register.registerMetric(ppaHeapGauge);
 
-// Register custom metrics
-register.registerMetric(durationHistogram);
-register.registerMetric(requestCounter);
-register.registerMetric(cpuGauge);
-register.registerMetric(memoryRssGauge);
-register.registerMetric(heapUsedGauge);
-
-// Update memory and CPU usage every 5s
 setInterval(() => {
   const usage = process.cpuUsage();
-  const memory = process.memoryUsage();
+  const mem = process.memoryUsage();
 
-  const userSec = usage.user / 1e6;    // microseconds to seconds
-  const systemSec = usage.system / 1e6;
-  cpuGauge.set(userSec + systemSec);
-
-  memoryRssGauge.set(memory.rss);
-  heapUsedGauge.set(memory.heapUsed);
+  const cpuTotalSec = (usage.user + usage.system) / 1e6;
+  ppaCpuGauge.set(cpuTotalSec);
+  ppaMemoryRssGauge.set(mem.rss);
+  ppaHeapGauge.set(mem.heapUsed);
 }, 5000);
 
 // Naive Fibonacci

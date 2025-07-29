@@ -8,15 +8,13 @@ var app = builder.Build();
 
 HttpClient httpClient = new();
 
-// 🔹 Metrics
-var durationHistogram = Metrics.CreateHistogram("ppa_mixed_task_duration_ms", "Duration of mixed tasks in ms");
-var requestCounter = Metrics.CreateCounter("ppa_mixed_task_requests_total", "Total mixed task requests");
+// Custom Prometheus metrics for PPA
+var ppaRequestCounter = Metrics.CreateCounter("ppa_dotnet_requests_total", "Total number of mixed task requests handled by .NET app");
+var ppaDurationHistogram = Metrics.CreateHistogram("ppa_dotnet_mixed_task_duration_ms", "Time taken for /api/mixed-tasks in .NET app");
+var ppaCpuTimeGauge = Metrics.CreateGauge("ppa_dotnet_process_cpu_seconds_total", "Total CPU time used by the .NET process (user + system)");
+var ppaMemoryRssGauge = Metrics.CreateGauge("ppa_dotnet_process_memory_rss_bytes", "Resident memory usage (RSS) by .NET process");
+var ppaHeapGauge = Metrics.CreateGauge("ppa_dotnet_process_heap_bytes", "Managed heap size in .NET");
 
-var cpuTimeGauge = Metrics.CreateGauge("ppa_process_cpu_seconds_total", "Total CPU time used by the process (user + system)");
-var memoryWorkingSetGauge = Metrics.CreateGauge("ppa_process_memory_working_set_bytes", "Working set (private memory used)");
-var memoryHeapGauge = Metrics.CreateGauge("ppa_gc_heap_bytes", "Managed heap size (GC.GetTotalMemory)");
-
-// 🔹 Background task to update memory/CPU usage every 5 seconds
 var process = Process.GetCurrentProcess();
 var timer = new PeriodicTimer(TimeSpan.FromSeconds(5));
 _ = Task.Run(async () =>
@@ -24,21 +22,20 @@ _ = Task.Run(async () =>
     while (await timer.WaitForNextTickAsync())
     {
         process.Refresh();
-        cpuTimeGauge.Set(process.TotalProcessorTime.TotalSeconds);
-        memoryWorkingSetGauge.Set(process.WorkingSet64);
-        memoryHeapGauge.Set(GC.GetTotalMemory(forceFullCollection: false));
+        ppaCpuTimeGauge.Set(process.TotalProcessorTime.TotalSeconds);
+        ppaMemoryRssGauge.Set(process.WorkingSet64);
+        ppaHeapGauge.Set(GC.GetTotalMemory(false));
     }
 });
 
-// 🔹 Expose /metrics
-app.UseMetricServer();     // Prometheus endpoint
-app.UseHttpMetrics();      // Auto track request durations
+app.UseMetricServer();
+app.UseHttpMetrics();
 
 // 🔹 Main API
 app.MapGet("/api/mixed-tasks", async () =>
 {
-    requestCounter.Inc();
-    var timer = durationHistogram.NewTimer();
+    ppaRequestCounter.Inc();
+    var timer = ppaDurationHistogram.NewTimer();
 
     try
     {
