@@ -1,0 +1,34 @@
+services:
+  ppa-dotnet-api:
+    image: ppa-dotnet-api
+    build:
+      context: .
+      dockerfile: Dockerfile
+    ports:
+      - "5036:80"
+  
+  ppa-node-api:
+    image: ppa-node-api
+    build:
+      context: ../ppa-node-api
+    ports:
+      - "3030:3030"
+
+  prometheus:
+    image: prom/prometheus
+    ports:
+      - "9090:9090"
+    volumes:
+      - ./prometheus.yml:/etc/prometheus/prometheus.yml
+
+  grafana:
+    image: grafana/grafana
+    ports:
+      - "3000:3000"
+    volumes:
+      - grafana-storage:/var/lib/grafana
+    environment:
+      - GF_SECURITY_ADMIN_PASSWORD=admin
+
+volumes:
+  grafana-storage:
