@@ -1,0 +1,6 @@
+@PPA.DotNet_HostAddress = http://localhost:5036
+
+GET {{PPA.DotNet_HostAddress}}/weatherforecast/
+Accept: application/json
+
+###
