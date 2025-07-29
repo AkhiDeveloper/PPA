@@ -16,3 +16,8 @@ scrape_configs:
     metrics_path: /metrics
     static_configs:
       - targets: ['ppa-go-api:8080']
+
+  - job_name: 'ppa-python-api'
+    metrics_path: /metrics
+    static_configs:
+      - targets: ['ppa-python-api:8000']

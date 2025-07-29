@@ -2,7 +2,7 @@ services:
   ppa-dotnet-api:
     image: ppa-dotnet-api
     build:
-      context: .
+      context: ../PPA.DotNet
       dockerfile: Dockerfile
     ports:
       - "5036:80"
@@ -20,6 +20,13 @@ services:
       context: ../ppa-go-api
     ports:
       - "8080:8080"
+
+  ppa-python-api:
+    image: ppa-python-api
+    build:
+      context: ../ppa-python-api
+    ports:
+      - "8000:8000"
 
   prometheus:
     image: prom/prometheus
