@@ -123,12 +123,5 @@ func fibonacciBig(n int) *big.Int {
 	if n <= 1 {
 		return big.NewInt(int64(n))
 	}
-	a := big.NewInt(0)
-	b := big.NewInt(1)
-	for i := 2; i <= n; i++ {
-		temp := new(big.Int).Add(a, b)
-		a.Set(b)
-		b.Set(temp)
-	}
-	return b
+	return new(big.Int).Add(fibonacciBig(n-1), fibonacciBig(n-2))
 }

@@ -2,7 +2,7 @@ services:
   ppa-dotnet-api:
     image: ppa-dotnet-api
     build:
-      context: ../PPA.DotNet
+      context: .
       dockerfile: Dockerfile
     ports:
       - "5036:80"
@@ -20,6 +20,13 @@ services:
       context: ../ppa-go-api
     ports:
       - "8080:8080"
+      
+  ppa-java-api:
+    image: ppa-java-api
+    build:
+      context: ./ppa-java-api
+    ports:
+      - "8090:8090"
 
   ppa-python-api:
     image: ppa-python-api

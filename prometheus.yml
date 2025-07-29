@@ -16,6 +16,11 @@ scrape_configs:
     metrics_path: /metrics
     static_configs:
       - targets: ['ppa-go-api:8080']
+      
+  - job_name: 'ppa-java-api'
+    metrics_path: /actuator/prometheus
+    static_configs:
+      - targets: ['ppa-java-api:8090']
 
   - job_name: 'ppa-python-api'
     static_configs:
