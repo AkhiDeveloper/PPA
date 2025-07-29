@@ -1,0 +1,7 @@
+{
+  "ppa-dotnet": "http://localhost:5036/api/mixed-tasks",
+  "ppa-node": "http://localhost:3030/api/mixed-tasks",
+  "ppa-python": "http://localhost:8000/api/mixed-tasks",
+  "ppa-go": "http://localhost:8080/api/mixed-tasks",
+  "ppa-java": "http://localhost:8090/api/mixed-tasks"
+}

@@ -16,7 +16,7 @@ export let options = {
 };
 
 export default function () {
-  const res = http.get('http://localhost:5036/api/mixed-tasks');
+  const res = http.get('http://localhost:8090/api/mixed-tasks');
 
   check(res, {
     'status is 200': (r) => r.status === 200,

@@ -1,0 +1,103 @@
+{
+  "id": null,
+  "title": "PPA Cross-Runtime Performance",
+  "timezone": "browser",
+  "schemaVersion": 37,
+  "version": 1,
+  "refresh": "10s",
+  "panels": [
+    {
+      "type": "timeseries",
+      "title": "Request Duration (95th Percentile)",
+      "id": 1,
+      "targets": [
+        { "expr": "ppa_dotnet_mixed_task_duration_ms", "legendFormat": "dotnet", "refId": "A" },
+        { "expr": "ppa_node_mixed_task_duration_ms", "legendFormat": "node", "refId": "B" },
+        { "expr": "ppa_go_mixed_task_duration_ms", "legendFormat": "go", "refId": "C" },
+        { "expr": "ppa_python_mixed_task_duration_ms", "legendFormat": "python", "refId": "D" },
+        { "expr": "ppa_java_mixed_task_duration_ms", "legendFormat": "java", "refId": "E" }
+      ],
+      "fieldConfig": {
+        "defaults": {
+          "unit": "ms",
+          "title": "Duration (ms)"
+        }
+      }
+    },
+    {
+      "type": "timeseries",
+      "title": "CPU Time (seconds)",
+      "id": 2,
+      "targets": [
+        { "expr": "ppa_dotnet_process_cpu_seconds_total", "legendFormat": "dotnet", "refId": "A" },
+        { "expr": "ppa_node_process_cpu_seconds_total", "legendFormat": "node", "refId": "B" },
+        { "expr": "ppa_go_process_cpu_seconds_total", "legendFormat": "go", "refId": "C" },
+        { "expr": "ppa_python_process_cpu_seconds_total", "legendFormat": "python", "refId": "D" },
+        { "expr": "ppa_java_process_cpu_seconds_total", "legendFormat": "java", "refId": "E" }
+      ],
+      "fieldConfig": {
+        "defaults": {
+          "unit": "s",
+          "title": "CPU Time (s)"
+        }
+      }
+    },
+    {
+      "type": "timeseries",
+      "title": "Memory Usage (RSS)",
+      "id": 3,
+      "targets": [
+        { "expr": "ppa_dotnet_process_memory_rss_bytes", "legendFormat": "dotnet", "refId": "A" },
+        { "expr": "ppa_node_process_memory_rss_bytes", "legendFormat": "node", "refId": "B" },
+        { "expr": "ppa_go_process_memory_rss_bytes", "legendFormat": "go", "refId": "C" },
+        { "expr": "ppa_python_process_memory_rss_bytes", "legendFormat": "python", "refId": "D" },
+        { "expr": "ppa_java_process_memory_rss_bytes", "legendFormat": "java", "refId": "E" }
+      ],
+      "fieldConfig": {
+        "defaults": {
+          "unit": "bytes",
+          "title": "RSS Memory"
+        }
+      }
+    },
+    {
+      "type": "timeseries",
+      "title": "Heap Usage (bytes)",
+      "id": 4,
+      "targets": [
+        { "expr": "ppa_dotnet_process_heap_bytes", "legendFormat": "dotnet", "refId": "A" },
+        { "expr": "ppa_node_process_heap_bytes", "legendFormat": "node", "refId": "B" },
+        { "expr": "ppa_go_process_heap_bytes", "legendFormat": "go", "refId": "C" },
+        { "expr": "ppa_python_process_heap_bytes", "legendFormat": "python", "refId": "D" },
+        { "expr": "ppa_java_process_heap_bytes", "legendFormat": "java", "refId": "E" }
+      ],
+      "fieldConfig": {
+        "defaults": {
+          "unit": "bytes",
+          "title": "Heap Usage"
+        }
+      }
+    },
+    {
+      "type": "timeseries",
+      "title": "Request Count",
+      "id": 5,
+      "targets": [
+        { "expr": "ppa_dotnet_requests_total", "legendFormat": "dotnet", "refId": "A" },
+        { "expr": "ppa_node_requests_total", "legendFormat": "node", "refId": "B" },
+        { "expr": "ppa_go_requests_total", "legendFormat": "go", "refId": "C" },
+        { "expr": "ppa_python_requests_total", "legendFormat": "python", "refId": "D" },
+        { "expr": "ppa_java_requests_total", "legendFormat": "java", "refId": "E" }
+      ],
+      "fieldConfig": {
+        "defaults": {
+          "unit": "short",
+          "title": "Requests"
+        }
+      }
+    }
+  ],
+  "templating": {
+    "list": []
+  }
+}
