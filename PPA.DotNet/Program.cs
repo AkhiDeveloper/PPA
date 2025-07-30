@@ -46,7 +46,7 @@ app.MapGet("/api/mixed-tasks", async () =>
 
         // CPU-bound tasks
         var cpuTasks = Enumerable.Range(0, 5)
-            .Select(_ => Task.Run(() => Fibonacci(42)))
+            .Select(_ => Task.Run(() => Fibonacci(10)))
             .ToList();
 
         await Task.WhenAll(apiCalls.Concat<Task>(cpuTasks));
@@ -54,7 +54,7 @@ app.MapGet("/api/mixed-tasks", async () =>
         return Results.Ok(new
         {
             ApiStatusCodes = apiCalls.Select(r => (int)r.Result.StatusCode),
-            CpuResults = cpuTasks.Select(t => t.Result)
+            CpuResults = cpuTasks.Select(t => t.Result.ToString())
         });
     }
     finally

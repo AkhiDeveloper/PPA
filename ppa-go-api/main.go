@@ -81,19 +81,22 @@ func mixedTasksHandler(w http.ResponseWriter, r *http.Request) {
 	apiURL := "https://3nqxwoaq54.execute-api.us-east-1.amazonaws.com/default/PP_DummyAPI"
 
 	// HTTP calls
-	var httpStatusCodes []int
-	var wg sync.WaitGroup
-	wg.Add(5)
-	for i := 0; i < 5; i++ {
-		go func() {
-			defer wg.Done()
-			resp, err := http.Get(apiURL)
-			if err == nil {
-				httpStatusCodes = append(httpStatusCodes, resp.StatusCode)
-				resp.Body.Close()
-			}
-		}()
-	}
+   httpStatusCodes := make([]int, 5)
+   var wg sync.WaitGroup
+   wg.Add(5)
+   for i := 0; i < 5; i++ {
+		   go func(idx int) {
+				   defer wg.Done()
+				   resp, err := http.Get(apiURL)
+				   if err == nil {
+						   httpStatusCodes[idx] = resp.StatusCode
+						   resp.Body.Close()
+				   } else {
+						   httpStatusCodes[idx] = 0 // or another error code
+						   fmt.Printf("Error fetching %s: %v\n", apiURL, err)
+				   }
+		   }(i)
+   }
 
 	// CPU-bound tasks
 	cpuResults := make([]*big.Int, 5)
@@ -108,7 +111,7 @@ func mixedTasksHandler(w http.ResponseWriter, r *http.Request) {
 
 	wg.Wait()
 	cpuWg.Wait()
-
+	fmt.Println("ApiStatusCodes:", httpStatusCodes)
 	duration := time.Since(start).Milliseconds()
 	durationHistogram.Observe(float64(duration))
 
